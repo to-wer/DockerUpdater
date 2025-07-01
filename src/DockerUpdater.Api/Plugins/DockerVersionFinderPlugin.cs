@@ -8,8 +8,7 @@ namespace DockerUpdater.Api.Plugins;
 public class DockerVersionFinderPlugin
 {
     private readonly HttpClient _httpClient = new();
-
-
+    
     [KernelFunction("get_latest_tags")]
     [Description("Get the latest tags for a Docker image")]
     public async Task<string?> GetLatestTagsAsync(string imageName)
