@@ -9,20 +9,27 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        string modelId = "command-a-03-2025";
-        var endpoint = "https://api.cohere.ai/compatibility/v1";
-        var apiKey = "7cxVrb4DyCDhsqZ6cenKXAkGD8ZElgjTrWIcVFaw";
-        var builder = Kernel.CreateBuilder()
-            .AddOpenAIChatCompletion(modelId, new Uri(endpoint), apiKey);
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddUserSecrets<Program>()
+            .Build();
 
-        builder.Services.AddLogging(services => services.AddConsole().SetMinimumLevel(LogLevel.Trace)); 
-        
+        var builder = Kernel.CreateBuilder();
+
+        var modelId = config["OPENAI_MODEL"] ?? "gpt-3.5-turbo";
+        var endpoint = config["OPENAI_API_BASE"] ?? "https://api.openai.com/v1/";
+        var apiKey = config["OPENAI_API_KEY"];
+
+        builder.AddOpenAIChatCompletion(modelId, new Uri(endpoint), apiKey);
+
+        builder.Services.AddLogging(services => services.AddConsole().SetMinimumLevel(LogLevel.Trace));
+
         Kernel kernel = builder.Build();
         var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
         kernel.Plugins.AddFromType<DockerVersionFinderPlugin>("DockerVersionFinder");
 
-        
+
         // Enable planning
         OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
         {
