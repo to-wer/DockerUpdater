@@ -22,7 +22,7 @@ public class Program
 
         builder.AddOpenAIChatCompletion(modelId, new Uri(endpoint), apiKey);
 
-        builder.Services.AddLogging(services => services.AddConsole().SetMinimumLevel(LogLevel.Trace));
+        // builder.Services.AddLogging(services => services.AddConsole().SetMinimumLevel(LogLevel.Trace));
 
         Kernel kernel = builder.Build();
         var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();

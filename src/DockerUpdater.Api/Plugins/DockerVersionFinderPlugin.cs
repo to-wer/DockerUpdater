@@ -10,8 +10,9 @@ public class DockerVersionFinderPlugin
     private readonly HttpClient _httpClient = new();
     
     [KernelFunction("get_latest_tags")]
-    [Description("Get the latest tags for a Docker image")]
-    public async Task<string?> GetLatestTagsAsync(string imageName)
+    [Description("Get the latest version for a docker image from a docker compose file.")]
+    public async Task<string?> GetLatestTagsAsync([Description("The name of the docker image")]string imageName,
+        [Description("The current version of the image")]string? currentVersion = null)
     {
         // TODO: Add support for ghcr.io and other registries
 
@@ -54,7 +55,9 @@ public class DockerVersionFinderPlugin
             .Select(x => x.Tag)
             .ToList();
 
-        return semverTags.FirstOrDefault();
+        var json = JsonSerializer.Serialize(semverTags.Take(5).ToList());
+
+        return json;
     }
 
     private Version? ParseSemVer(string tag)
